@@ -29,6 +29,7 @@
 </div>
 </main>
 <script>
+(() => {
 "use strict";
 const canvas = document.querySelector("#game");
 const ctx = canvas.getContext("2d");
@@ -232,7 +233,7 @@ function knife(x,y,s=1,angle=0){
   rect(-12,23,25,62,c.ink);rect(-9,24,19,53,"#21277e");rect(-6,29,6,35,"#346fdb");rect(0,33,7,10,c.light);rect(0,48,7,10,c.light);rect(-10,73,22,11,c.pink);
   ctx.restore();
 }
-function top(title,sub,t){
+function drawChallengeHeader(title,sub,t){
   frame(184,19,592,99,c.light,"#101047",23);
   frame(337,11,286,22,c.pink,"#131445",7);
   text("OFFICE ARCADE / 微型后厨",480,22,12,c.light);
@@ -260,7 +261,7 @@ function board(){
 }
 function drawChop(t){
   const p=state.phase,d=dishes[p.id],last=Math.max(0,1-(t-p.hit)*5.5);
-  top("01 / 分解砧板","按住 E 上下切 · 逐步拆出零件",t);
+  drawChallengeHeader("01 / 分解砧板","按住 E 上下切 · 逐步拆出零件",t);
   board();
   if(p.cuts<3){for(let i=0;i<31;i++){const a=i*2.39,r=8+(i*27)%56,x=390+Math.cos(a)*r,y=255+Math.sin(a)*r*.65;rect(x+Math.sin(t*3+i)*5,y,18+(i%4)*4,12+(i%3)*3,["#aa8bff","#d19dff","#776af4","#e0b1ff"][i%4]);}}
   else {
@@ -274,7 +275,7 @@ function drawChop(t){
 }
 function drawWok(t){
   const p=state.phase, d=dishes[p.id], jump=clamp((.55-(t-p.toss))/.55,0,1);
-  top("02 / 电磁颠锅",p.flipWindow>0?"现在按 F 翻面！  "+p.flipWindow.toFixed(1)+" 秒":"按住 E 翻炒 · 翻面提示亮起再按 F",t);
+  drawChallengeHeader("02 / 电磁颠锅",p.flipWindow>0?"现在按 F 翻面！  "+p.flipWindow.toFixed(1)+" 秒":"按住 E 翻炒 · 翻面提示亮起再按 F",t);
   ellipse(452,362,169,40,"#201267");ellipse(452,354,160,38,c.pink);ellipse(452,346,157,35,"#222b9b");
   for(let i=0;i<12;i++){const x=341+i*20;rect(x,365+(i>2&&i<10?6:0),9,12,i%2?c.pink:c.light);}
   const shake=keys.has("e")?Math.sin(t*19)*5:0;
@@ -313,7 +314,7 @@ function glove(x,y,side){
 }
 function drawServe(t){
   const p=state.phase, d=dishes[p.id], danger=Math.abs(p.tilt)>.54;
-  top("03 / 端盘上菜 · 电流干扰",p.route>=1?"松开 E · 将指针留在中心 1.2 秒":"按住 E 前进 · A / D 向反方向修正",t);
+  drawChallengeHeader("03 / 端盘上菜 · 电流干扰",p.route>=1?"松开 E · 将指针留在中心 1.2 秒":"按住 E 前进 · A / D 向反方向修正",t);
   const vanish=[480,160], shift=p.tilt*35;
   poly([[433,162],[526,162],[735,405],[222,405]],"#0b123f");
   for(let i=0;i<11;i++){const f=((i/11+(p.route*9)%1/11)%1)**1.5;const ww=45+206*f;path([[vanish[0]-ww+shift*f,166+237*f],[vanish[0]+ww+shift*f,166+237*f]],i%4===0?"#4539ad":"#212459",2);}
@@ -613,6 +614,7 @@ function frameLoop(ms){
   requestAnimationFrame(frameLoop);
 }
 requestAnimationFrame(frameLoop);
+})();
 </script>
 </body>
 </html>
