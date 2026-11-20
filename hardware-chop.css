@@ -1,0 +1,13 @@
+.hardware-controls {
+  position: absolute;
+  left: 1%;
+  bottom: 1%;
+  z-index: 22;
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  max-width: 47%;
+  padding: .4em .6em;
+  font: 600 clamp(11px, 1.05cqw, 14px)/1.4 system-ui;
+}
+.hardware-controls button { flex: none; font: inherit; padding: .35em .6em; }
