@@ -972,7 +972,7 @@ function complete(grade,showGrade=true){
   const name={chop:'切菜',wok:'颠锅',serve:'端盘'}[scene];
   evaluations.push({name,grade});
   const won=showGrade&&!practice&&scene==='serve';
-  if(showGrade)window.KitchenAudio?.cue(won?'win':grade==='EXCELLENT'?'excellent':'good','fridge');
+  if(showGrade)window.KitchenAudio?.cue(won?'win':grade==='EXCELLENT'?'excellent':'good','fridge',won&&grade==='EXCELLENT');
   if(won&&stageFx){
     stageFx.celebrate(now);
     stageFx.hit(scene,now,640,208,.9);

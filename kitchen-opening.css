@@ -481,7 +481,7 @@
   box-shadow: inset 0 0 0 2px var(--card-glow), 4px 5px #281119;
   transition: transform 160ms, box-shadow 160ms;
 }
-.kitchen-opening #opening-dish {
+.kitchen-opening #opening-dish:not([data-revealed]) {
   --card-glow: #fde2a1;
   --card-dark: #824052;
   --card-bright: #c96665;
@@ -570,4 +570,189 @@
 
 @media (prefers-reduced-motion: reduce) {
   .kitchen-opening button { transition: none !important; animation: none !important; }
+}
+
+/* Engraved brass cabinet and illuminated card trays. */
+.kitchen-opening[data-page="draw"] {
+  background:
+    radial-gradient(ellipse at 24% 37%, #ffe4a2 1%, #f3a65e 49%, #aa432a 100%);
+}
+[data-page="draw"] .opening-shell { position: relative; }
+[data-page="draw"] .opening-shell::before {
+  content: "";
+  position: fixed;
+  inset: 8px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 18% 44%, #fff0a525 20%, #52232a8a 100%),
+    repeating-linear-gradient(135deg, #fff0b12a 0 1px, transparent 1px 9px),
+    repeating-conic-gradient(from 0deg at 22% 44%, #fbbf871a 0deg 9deg, #79333418 9deg 18deg);
+}
+[data-page="draw"] .opening-top {
+  background: linear-gradient(90deg, transparent, #471f2e95 26%, #471f2eb8 74%, transparent);
+  border-image: linear-gradient(90deg, transparent, #ffc568, transparent) 1;
+  box-shadow: none;
+}
+.opening-draw { gap: clamp(23px, 4.3vw, 76px); }
+.chef-chat {
+  position: relative;
+  align-content: center;
+  background:
+    radial-gradient(circle at 50% 30%, #ffda86 4%, #f87949 58%, transparent 59%),
+    repeating-conic-gradient(from 45deg, #fffac735 0 25%, transparent 0 50%) 0 0/16px 16px;
+  border: 3px solid #522835;
+  padding: clamp(16px, 3vw, 42px);
+  box-shadow: 0 0 0 2px #ffc66b, inset 0 0 0 4px #f3ad67, 7px 9px #70352f;
+}
+.draw-medallion {
+  position: absolute;
+  top: -23px;
+  left: 21px;
+  width: 49px;
+  aspect-ratio: 1;
+  background: #fbba68;
+  display: grid;
+  place-items: center;
+  border: 3px solid #512635;
+  box-shadow: 0 0 0 2px #ffe79d, inset 0 0 0 2px #fff1a1, 4px 4px #813d37;
+  transform: rotate(-9deg);
+  z-index: 2;
+}
+.draw-medallion canvas,
+.draw-scene-icons canvas { image-rendering: pixelated; }
+.draw-scene-icons {
+  justify-self: center;
+  display: flex;
+  gap: clamp(4px, .85vw, 12px);
+  padding: 5px 8px;
+  background: #4c2434;
+  border: 2px solid #f3ac5e;
+  box-shadow: 0 0 0 2px #592c35, 4px 4px #9d513d;
+}
+.draw-scene-icons canvas {
+  width: clamp(26px, 3vw, 40px);
+  height: auto;
+  aspect-ratio: 1;
+  border: 1px solid #ffcb85;
+  background: #ffdb96;
+}
+.draw-picks {
+  --cabinet-edge: #f6b35e;
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 50% 56%, #ed8d552f 0%, transparent 70%),
+    repeating-linear-gradient(135deg, #ffd89608 0 2px, transparent 2px 9px),
+    #3b2234;
+  box-shadow: 0 0 0 2px #ac5b43, 0 0 0 5px var(--cabinet-edge), inset 0 0 0 3px #b06954, 8px 12px #642e34, 8px 16px #42233740;
+}
+.draw-picks::before,
+.draw-picks::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+.draw-picks::before {
+  inset: 9px;
+  border: 1px solid #e7a15b82;
+  clip-path: polygon(0 0, 11% 0, 11% 2%, 89% 2%, 89% 0, 100% 0, 100% 100%, 89% 100%, 89% 98%, 11% 98%, 11% 100%, 0 100%);
+}
+.draw-picks::after {
+  inset: 4px;
+  background: radial-gradient(circle, #ffe39a 0 1px, #aa5a43 2px 3px, transparent 4px) left top/9px 9px no-repeat,
+              radial-gradient(circle, #ffe39a 0 1px, #aa5a43 2px 3px, transparent 4px) right top/9px 9px no-repeat,
+              radial-gradient(circle, #ffe39a 0 1px, #aa5a43 2px 3px, transparent 4px) left bottom/9px 9px no-repeat,
+              radial-gradient(circle, #ffe39a 0 1px, #aa5a43 2px 3px, transparent 4px) right bottom/9px 9px no-repeat;
+}
+.opening-steps { gap: 6px; }
+.opening-steps li {
+  border: 1px solid #996354;
+  border-bottom-width: 3px;
+  background: #241a2b9c;
+}
+.opening-steps [aria-current="step"] {
+  border-color: #ffd17e;
+  background: linear-gradient(0deg, #982f3b, #6a2f41);
+  box-shadow: 0 2px #d58148, inset 0 0 11px #fa91324d;
+}
+.kitchen-opening .chef-answers button {
+  overflow: hidden;
+  isolation: isolate;
+  padding-right: clamp(12px, 3vw, 45px);
+}
+.chef-answers button::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  width: clamp(30px, 6vw, 60px);
+  aspect-ratio: 1;
+  right: -8px;
+  bottom: -9px;
+  background: var(--option-accent);
+  opacity: .41;
+  clip-path: polygon(40% 0, 60% 0, 60% 35%, 100% 35%, 100% 65%, 60% 65%, 60% 100%, 40% 100%, 40% 65%, 0 65%, 0 35%, 40% 35%);
+}
+.opening-decks {
+  position: relative;
+  isolation: isolate;
+  gap: clamp(16px, 2.6vw, 34px);
+  padding: 15px 13px 19px;
+  border: 2px solid #9d624a;
+  background: #231c2c;
+  box-shadow: inset 0 3px 0 #180f1b;
+}
+.draw-card-light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 26% 53%, #ffc56e4d, transparent 43%),
+    radial-gradient(ellipse at 72% 53%, #ee7e8757, transparent 43%),
+    repeating-linear-gradient(90deg, transparent 0 13px, #ffc48f15 13px 14px);
+}
+.opening-decks[data-reveals="2"] .draw-card-light {
+  background: radial-gradient(ellipse at 50% 54%, #fbc47064, transparent 72%), #4c2e40;
+}
+.kitchen-opening .opening-card {
+  border: 3px solid #311828;
+  background: radial-gradient(circle at 50% 42%, var(--card-bright), var(--card-dark) 68%);
+  box-shadow: inset 0 0 0 2px var(--card-glow), 2px 4px #3c2533, 3px 7px #be7e53, 5px 9px #351c2b;
+}
+.kitchen-opening .opening-card::before {
+  border: 2px solid var(--card-glow);
+  box-shadow: inset 0 0 0 2px #43233882;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+.kitchen-opening .opening-card::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  z-index: -1;
+  pointer-events: none;
+  background: repeating-conic-gradient(from 15deg, transparent 0 20deg, #fff3c61a 20deg 22deg);
+}
+.kitchen-opening .opening-card[data-skin="neon"] { --revealed: #ecc9ff; --card-glow: #80fbff; --card-dark: #53357b; }
+.kitchen-opening .opening-card[data-skin="fridge"] { --revealed: #d6f6ff; --card-glow: #91d5ff; --card-dark: #43749b; }
+.kitchen-opening .opening-card[data-skin="toilet"] { --revealed: #dcf4e5; --card-glow: #a9e8bc; --card-dark: #548875; }
+.kitchen-opening .opening-card[data-skin="coffee"] { --revealed: #ffdfae; --card-glow: #f4bb73; --card-dark: #966040; }
+.kitchen-opening .opening-card[data-revealed] {
+  background: radial-gradient(circle, #fff7dc, var(--revealed, #ffe8b5));
+  animation: none;
+}
+.opening-card[data-revealed] .opening-card-art {
+  background: radial-gradient(circle, #fff9e6, var(--revealed, #ffe8b5));
+  box-shadow: inset 0 0 0 2px #fff6d9, 3px 3px var(--card-dark);
+}
+.kitchen-opening[data-page="draw"] .opening-cook:not(:disabled) {
+  box-shadow: inset 0 0 0 2px #fff19c, 3px 4px #27121a, 0 0 22px #f0b36c69;
+}
+@media (max-width: 680px) {
+  .chef-chat { padding: 13px; }
+  .draw-medallion { display: none; }
+  .draw-scene-icons { display: none; }
+  .opening-decks { padding: 11px 9px 15px; }
 }

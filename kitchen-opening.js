@@ -122,6 +122,8 @@
     const home = get("opening-home");
     let pool = null;
     let coverTransition = null;
+    drawMark(draw.querySelector(".draw-medallion canvas"), "hat");
+    draw.querySelectorAll("[data-mark]").forEach(canvas => drawMark(canvas, canvas.dataset.mark));
 
     function showStep(activeStep) {
       steps.forEach((step, index) => {
@@ -179,6 +181,15 @@
 
     function renderCard(card, name, mark, theme) {
       const revealed = mark !== "mystery";
+      card.dataset.skin = theme ?? (revealed ? mark : "");
+      if (revealed && !card.hasAttribute("data-revealed") &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        card.animate?.([
+          { transform: "perspective(550px) rotateY(-89deg) scale(.91)", filter: "brightness(1.75)" },
+          { transform: "perspective(550px) rotateY(12deg) scale(1.045)", offset: .74 },
+          { transform: "perspective(550px) rotateY(0) scale(1)" }
+        ], { duration: 440, easing: "cubic-bezier(.2,.75,.23,1)" });
+      }
       card.toggleAttribute("data-revealed", revealed);
       card.setAttribute("aria-disabled", String(revealed));
       card.querySelector(".opening-card-name").textContent = name;
@@ -190,6 +201,7 @@
       renderCard(sceneCard, scene?.name ?? pool.scenes.map(option => option.name).join(" / "), scene?.id ?? "mystery");
       renderCard(dishCard, dishName ?? pool.dishes.map(id => foods[id]).join(" / "), dish ?? "mystery", scene?.id ?? pool.scenes[0].id);
       cook.disabled = !scene || dish === null;
+      decks.dataset.reveals = Number(Boolean(scene)) + Number(dish !== null);
       if (!cook.disabled) question.textContent = "走，去" + scene.name + "做「" + dishName + "」！";
       result.textContent = [scene?.name, dishName].filter(Boolean).join(" · ");
     }
