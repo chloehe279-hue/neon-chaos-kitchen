@@ -30,7 +30,7 @@
   const doc=root.document;
   const AudioContext=root.AudioContext||root.webkitAudioContext;
   const storeKey='chaos-kitchen-sound-muted-v2';
-  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent.wav?v=player-voice',doc.currentScript.src);
+  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent-player.wav',doc.currentScript.src);
 
   const soundNames=['start','enter','select','card','pickup','station','chop','flip','miss','surge','warn','good','excellent','fail','win','hazard'];
   let context,master,music,activity,noiseBuffer,timer,track=null,step=0,nextBeat=0;
@@ -246,10 +246,10 @@
     if(warning)cue('warn',next);
   }
 
-  function duck(t,duration){
+  function duck(t,duration,level=resultUntil>t?.13:.31){
     if(!music)return;
     music.gain.cancelScheduledValues(t);
-    music.gain.setTargetAtTime(resultUntil>t?.13:.31,t,.011);
+    music.gain.setTargetAtTime(level,t,.011);
     music.gain.setTargetAtTime(.48,Math.max(t+duration,resultUntil),.066);
   }
   function stopResult(){
@@ -307,7 +307,11 @@
     const voiced=name==='excellent'||name==='win'&&heavy;
     if(name==='win'||name==='fail'){
       finishCue(name==='win',theme,t,song,material);
-      if(voiced)shoutExcellent(t);
+      if(voiced){
+        resultBus.gain.setValueAtTime(.20,t);
+        resultBus.gain.setTargetAtTime(.92,t+1.15,.07);
+        shoutExcellent(t);
+      }
       return;
     }
     if(name==='enter')stopResult();
@@ -348,18 +352,18 @@
       if(name==='hazard')beep(low*.61,low*.23,.29,.14,'triangle',.11);
       return;
     }
-    if(voiced)shoutExcellent(t);
+    if(voiced){shoutExcellent(t);return;}
     const melodies={
       start:[0,7,12,19],enter:material.entry,select:[7,12],card:[0,3,7,12],pickup:[0,12,19],station:[0,5,12],
-      miss:[3,-2],warn:[12,7,12],good:[0,4,7,12],excellent:[0,7,12,16,19,24]
+      miss:[3,-2],warn:[12,7,12],good:[0,4,7,12]
     };
-    const notes=melodies[name], spacing=name==='excellent'?.064:name==='warn'?.12:.055;
+    const notes=melodies[name], spacing=name==='warn'?.12:.055;
     notes.forEach((note,i)=>{
       const f=hz(song.key+12+note),last=i===notes.length-1;
-      beep(f,f,last?.17:.085,voiced?.087:.14,song.voice,i*spacing);
+      beep(f,f,last?.17:.085,.14,song.voice,i*spacing);
     });
     if(name==='enter')crack(.15,.16,texture,.035);
-    if(name==='excellent'||name==='good')beep(hz(song.key),hz(song.key),.24,.11,'triangle',spacing*2);
+    if(name==='good')beep(hz(song.key),hz(song.key),.24,.11,'triangle',spacing*2);
   }
 
   function stopAnnouncement(){
@@ -369,13 +373,11 @@
   }
   function shoutExcellent(t){
     stopAnnouncement();
-    duck(t,.83);
-    tone(master,t,173,.12,.18,'sine',53);
-    noise(master,t,.11,.10,3400);
+    duck(t,1.46,.085);
     if(recordedExcellent){
       const voice=context.createBufferSource(),gain=context.createGain();
       voice.buffer=recordedExcellent;
-      gain.gain.value=.95;
+      gain.gain.value=1.36;
       voice.connect(gain);gain.connect(master);
       const stop=()=>{voice.stop();};
       voice.onended=()=>{
@@ -383,12 +385,12 @@
         if(announcement===stop)announcement=null;
       };
       announcement=stop;
-      voice.start(t+.045);
+      voice.start(t);
       return;
     }
     if(!voiceUrl||!root.Audio)return;
     const voice=new root.Audio(voiceUrl);
-    voice.volume=.44;
+    voice.volume=.64;
     const stop=()=>voice.pause();
     const done=()=>{if(announcement===stop)announcement=null;};
     announcement=stop;
