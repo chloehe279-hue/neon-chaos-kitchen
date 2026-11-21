@@ -117,7 +117,14 @@ body.coffee-scene button,body.coffee-scene select,body.coffee-scene input{backgr
     </div>
     <div class="opening-draw" id="opening-draw" hidden>
       <div class="chef-chat">
+        <div class="draw-medallion" aria-hidden="true"><canvas width="32" height="32"></canvas></div>
         <div class="chef-portrait" role="img" aria-label="小厨师"></div>
+        <div class="draw-scene-icons" aria-hidden="true">
+          <canvas data-mark="coffee" width="32" height="32"></canvas>
+          <canvas data-mark="fridge" width="32" height="32"></canvas>
+          <canvas data-mark="toilet" width="32" height="32"></canvas>
+          <canvas data-mark="neon" width="32" height="32"></canvas>
+        </div>
         <div class="chef-line">
           <h2 id="opening-draw-title">小厨师</h2>
           <p id="chef-question" tabindex="-1" aria-live="polite"></p>
@@ -131,6 +138,7 @@ body.coffee-scene button,body.coffee-scene select,body.coffee-scene input{backgr
         </ol>
         <div class="chef-answers" id="chef-answers" aria-label="选择回答"></div>
         <div class="opening-decks" hidden>
+          <div class="draw-card-light" aria-hidden="true"></div>
           <button class="opening-card" id="opening-scene" type="button">
             <span class="opening-card-label">场景卡</span>
             <span class="opening-card-art"><canvas width="32" height="32" aria-hidden="true"></canvas></span>
@@ -1562,8 +1570,9 @@ function conclude(success,label){
   const won=success&&state.view==="serve"&&!state.practice;
   p.done={success,label,backIn:won?(stageFx?.winHold??2.8):(stageFx?.hold??1.72)};
   state.noticeQueue=[];state.toast=null;
-  const sound=won?"win":!success?"fail":label.startsWith("EXCELLENT")?"excellent":"good";
-  window.KitchenAudio?.cue(sound,state.scene);
+  const excellent=success&&label.startsWith("EXCELLENT");
+  const sound=won?"win":!success?"fail":excellent?"excellent":"good";
+  window.KitchenAudio?.cue(sound,state.scene,won&&excellent);
   if(won&&stageFx)stageFx.celebrate(now);
   else if(stageFx)stageFx.rate(now,label,success);
   else toast(label,success?c.green:c.red,1.35,success?"success":"error");

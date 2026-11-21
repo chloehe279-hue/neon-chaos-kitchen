@@ -34,6 +34,7 @@
   let context,master,music,activity,noiseBuffer,timer,track=null,step=0,nextBeat=0;
   let mood=null,stage='map',urgent=false,action=false,activityLevel=0,embedded=false,button;
   let muted=false, pending=null, resultBus=null, resultUntil=0;
+  let announcement=null;
   try{muted=root.localStorage.getItem(storeKey)==='1';}catch{}
   const hz=note=>440*2**((note-69)/12);
 
@@ -211,11 +212,13 @@
       noiseBuffer=context.createBuffer(1,sampleCount,context.sampleRate);
       const data=noiseBuffer.getChannelData(0);
       for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
-      context.onstatechange=reconcile;
+      context.onstatechange=()=>{
+        reconcile();updateButton();
+      };
     }
-    if(context.state==='running')reconcile();
+    if(context.state==='running'){reconcile();updateButton();}
     else context.resume().then(()=>{
-      reconcile();
+      reconcile();updateButton();
       const first=pending;pending=null;
       if(first&&first.expires>Date.now())cue(first.name,first.theme,first.heavy);
     }).catch(()=>{pending=null;});
@@ -285,7 +288,7 @@
   }
   function cue(name,theme=mood||'cover',heavy=false){
     if(!soundNames.includes(name))return;
-    if(embedded){send({cue:name,heavy:name==='chop'&&heavy===true});return;}
+    if(embedded){send({cue:name,heavy:heavy===true});return;}
     if(muted||!context||doc.hidden)return;
     if(context.state!=='running'){
       pending={name,theme,heavy,expires:Date.now()+300};
@@ -293,6 +296,7 @@
     }
     const t=context.currentTime+.008, song=scores[theme]||scores.cover;
     const material=materials[theme]||materials.neon;
+    if(name==='excellent'||name==='win'&&heavy)shoutExcellent();
     if(name==='win'||name==='fail'){
       finishCue(name==='win',theme,t,song,material);
       return;
@@ -348,17 +352,36 @@
     if(name==='excellent'||name==='good')beep(hz(song.key),hz(song.key),.24,.11,'triangle',spacing*2);
   }
 
+  function stopAnnouncement(){
+    if(!announcement)return;
+    root.speechSynthesis?.cancel();
+    announcement=null;
+  }
+  function shoutExcellent(){
+    const speech=root.speechSynthesis;
+    if(!speech||!root.SpeechSynthesisUtterance)return;
+    stopAnnouncement();
+    const call=new root.SpeechSynthesisUtterance('Excellent!');
+    call.lang='en-US';call.pitch=.76;call.rate=.84;call.volume=1;
+    const english=speech.getVoices().filter(voice=>/^en[-_]/i.test(voice.lang));
+    call.voice=english.find(voice=>/daniel|alex|david|guy|fred/i.test(voice.name))
+      ??english.find(voice=>voice.localService&&/^en[-_]us$/i.test(voice.lang))??english[0]??null;
+    call.onend=call.onerror=()=>{if(announcement===call)announcement=null;};
+    announcement=call;
+    speech.speak(call);
+  }
   function mount(){
     button=doc.getElementById('audio-toggle');
     if(button){
       button.hidden=embedded||!AudioContext;
       button.onclick=()=>{
+        if(!muted&&context?.state!=='running'){unlock();return;}
         muted=!muted;
         try{root.localStorage.setItem(storeKey,muted?'1':'0');}catch{}
         updateButton();
         if(muted){
           pending=null;
-          stopResult();
+          stopAnnouncement();stopResult();
           if(master)master.gain.setTargetAtTime(0,context.currentTime,.015);
           reconcile();
         }else{
@@ -368,18 +391,21 @@
       };
       updateButton();
     }
+    unlock();
   }
   function updateButton(){
     if(!button)return;
     button.setAttribute('aria-pressed',String(muted));
-    button.textContent=muted?'♪ 静音':'♪ 声音';
+    const needsGesture=!muted&&context?.state!=='running';
+    button.textContent=muted?'♪ 静音':needsGesture?'♪ 开启声音':'♪ 声音';
+    button.setAttribute('aria-label',muted||needsGesture?'开启声音':'静音');
   }
   function unlockOnGesture(event){
     if(event.target!==button)unlock();
   }
-  for(const name of ['pointerdown','keydown','click'])doc.addEventListener(name,unlockOnGesture,{capture:true});
-  doc.addEventListener('visibilitychange',reconcile);
-  root.addEventListener('pagehide',()=>{stopMusic();stopResult();});
+  for(const name of ['pointerdown','pointerup','keydown','click'])doc.addEventListener(name,unlockOnGesture,{capture:true});
+  doc.addEventListener('visibilitychange',()=>{if(doc.hidden)stopAnnouncement();reconcile();});
+  root.addEventListener('pagehide',()=>{stopMusic();stopResult();stopAnnouncement();});
   root.addEventListener('pageshow',reconcile);
   root.KitchenAudio={sync,cue,mount,relay(){embedded=true;}};
 })(window);
