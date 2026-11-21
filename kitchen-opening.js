@@ -123,9 +123,19 @@
     let pool = null;
     let coverTransition = null;
     drawMark(draw.querySelector(".draw-medallion canvas"), "hat");
-    draw.querySelectorAll("[data-mark]").forEach(canvas => drawMark(canvas, canvas.dataset.mark));
+    const worlds = draw.querySelectorAll("[data-world]");
+    const readout = get("draw-readout");
+    function updateAtlas(){
+      worlds.forEach(world => {
+        const id = world.dataset.world;
+        world.dataset.state = id === scene?.id ? "selected" :
+          !pool || (!scene && pool.scenes.some(option => option.id === id)) ? "available" : "dimmed";
+      });
+      draw.dataset.world = scene?.id ?? "";
+    }
 
     function showStep(activeStep) {
+      draw.dataset.step = activeStep;
       steps.forEach((step, index) => {
         if (index === activeStep) step.setAttribute("aria-current", "step");
         else step.removeAttribute("aria-current");
@@ -140,7 +150,16 @@
         button.type = "button";
         const title = document.createElement("strong");
         title.textContent = choice.label;
-        button.append(title);
+        const icons = document.createElement("span");
+        icons.className = "draw-option-icons";
+        icons.setAttribute("aria-hidden", "true");
+        for (const value of choice.scenes ?? choice.dishes) {
+          const icon = document.createElement("canvas");
+          icon.width = icon.height = 32;
+          drawMark(icon,value);
+          icons.append(icon);
+        }
+        button.append(icons,title);
         if (choice.scenes) {
           const destinations = document.createElement("small");
           destinations.textContent = choice.scenes.map(id => scenes.find(scene => scene.id === id).name).join(" / ");
@@ -163,6 +182,8 @@
       cook.hidden = true;
       cook.disabled = true;
       result.textContent = "";
+      readout.hidden = true;
+      updateAtlas();
       showStep(0);
       ask("开锅啦！今天想吃什么口感？", cravings, craving => {
         showStep(1);
@@ -202,6 +223,10 @@
       renderCard(dishCard, dishName ?? pool.dishes.map(id => foods[id]).join(" / "), dish ?? "mystery", scene?.id ?? pool.scenes[0].id);
       cook.disabled = !scene || dish === null;
       decks.dataset.reveals = Number(Boolean(scene)) + Number(dish !== null);
+      updateAtlas();
+      readout.hidden = false;
+      readout.textContent = cook.disabled ? (scene ? "再翻菜品卡" : dish !== null ? "再翻场景卡" : "翻开两张卡，确定本局的厨房和菜品") :
+        `${scene.name} · ${dishName}`;
       if (!cook.disabled) question.textContent = "走，去" + scene.name + "做「" + dishName + "」！";
       result.textContent = [scene?.name, dishName].filter(Boolean).join(" · ");
     }
@@ -246,6 +271,7 @@
     };
     play.onclick = async () => {
       if (play.disabled) return;
+      window.KitchenAudio?.unlock?.();
       window.KitchenAudio?.cue("start","cover");
       const manual = get("opening-manual");
       const art = get("cover-art");

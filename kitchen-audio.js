@@ -29,12 +29,14 @@
   const failTimes=[0,.23,.49,.79,1.15,1.55,1.99,2.46,3.05];
   const doc=root.document;
   const AudioContext=root.AudioContext||root.webkitAudioContext;
-  const storeKey='chaos-kitchen-muted';
+  const storeKey='chaos-kitchen-sound-muted-v2';
+  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent.wav',doc.currentScript.src);
+
   const soundNames=['start','enter','select','card','pickup','station','chop','flip','miss','surge','warn','good','excellent','fail','win','hazard'];
   let context,master,music,activity,noiseBuffer,timer,track=null,step=0,nextBeat=0;
   let mood=null,stage='map',urgent=false,action=false,activityLevel=0,embedded=false,button;
   let muted=false, pending=null, resultBus=null, resultUntil=0;
-  let announcement=null;
+  let announcement=null, recordedExcellent=null;
   try{muted=root.localStorage.getItem(storeKey)==='1';}catch{}
   const hz=note=>440*2**((note-69)/12);
 
@@ -212,6 +214,12 @@
       noiseBuffer=context.createBuffer(1,sampleCount,context.sampleRate);
       const data=noiseBuffer.getChannelData(0);
       for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
+      if(voiceUrl&&root.fetch){
+        root.fetch(voiceUrl).then(response=>{
+          if(!response.ok)throw new Error('Announcer asset unavailable');
+          return response.arrayBuffer();
+        }).then(bytes=>context.decodeAudioData(bytes)).then(clip=>{recordedExcellent=clip;}).catch(()=>{});
+      }
       context.onstatechange=()=>{
         reconcile();updateButton();
       };
@@ -296,9 +304,10 @@
     }
     const t=context.currentTime+.008, song=scores[theme]||scores.cover;
     const material=materials[theme]||materials.neon;
-    if(name==='excellent'||name==='win'&&heavy)shoutExcellent();
+    const voiced=name==='excellent'||name==='win'&&heavy;
     if(name==='win'||name==='fail'){
       finishCue(name==='win',theme,t,song,material);
+      if(voiced)shoutExcellent(t);
       return;
     }
     if(name==='enter')stopResult();
@@ -339,6 +348,7 @@
       if(name==='hazard')beep(low*.61,low*.23,.29,.14,'triangle',.11);
       return;
     }
+    if(voiced)shoutExcellent(t);
     const melodies={
       start:[0,7,12,19],enter:material.entry,select:[7,12],card:[0,3,7,12],pickup:[0,12,19],station:[0,5,12],
       miss:[3,-2],warn:[12,7,12],good:[0,4,7,12],excellent:[0,7,12,16,19,24]
@@ -346,7 +356,7 @@
     const notes=melodies[name], spacing=name==='excellent'?.064:name==='warn'?.12:.055;
     notes.forEach((note,i)=>{
       const f=hz(song.key+12+note),last=i===notes.length-1;
-      beep(f,f,last?.17:.085,.14,song.voice,i*spacing);
+      beep(f,f,last?.17:.085,voiced?.087:.14,song.voice,i*spacing);
     });
     if(name==='enter')crack(.15,.16,texture,.035);
     if(name==='excellent'||name==='good')beep(hz(song.key),hz(song.key),.24,.11,'triangle',spacing*2);
@@ -354,20 +364,38 @@
 
   function stopAnnouncement(){
     if(!announcement)return;
-    root.speechSynthesis?.cancel();
+    announcement();
     announcement=null;
   }
-  function shoutExcellent(){
+  function shoutExcellent(t){
+    stopAnnouncement();
+    duck(t,.83);
+    tone(master,t,173,.135,.29,'sine',53);
+    noise(master,t,.165,.27,3400);
+    if(recordedExcellent){
+      const voice=context.createBufferSource(),gain=context.createGain();
+      voice.buffer=recordedExcellent;
+      gain.gain.value=.95;
+      voice.connect(gain);gain.connect(master);
+      const stop=()=>{voice.stop();};
+      voice.onended=()=>{
+        voice.disconnect();gain.disconnect();
+        if(announcement===stop)announcement=null;
+      };
+      announcement=stop;
+      voice.start(t+.045);
+      return;
+    }
     const speech=root.speechSynthesis;
     if(!speech||!root.SpeechSynthesisUtterance)return;
-    stopAnnouncement();
     const call=new root.SpeechSynthesisUtterance('Excellent!');
-    call.lang='en-US';call.pitch=.76;call.rate=.84;call.volume=1;
+    call.lang='en-US';call.pitch=1.36;call.rate=1.12;call.volume=1;
     const english=speech.getVoices().filter(voice=>/^en[-_]/i.test(voice.lang));
     call.voice=english.find(voice=>/daniel|alex|david|guy|fred/i.test(voice.name))
       ??english.find(voice=>voice.localService&&/^en[-_]us$/i.test(voice.lang))??english[0]??null;
-    call.onend=call.onerror=()=>{if(announcement===call)announcement=null;};
-    announcement=call;
+    const stop=()=>speech.cancel();
+    call.onend=call.onerror=()=>{if(announcement===stop)announcement=null;};
+    announcement=stop;
     speech.speak(call);
   }
   function mount(){
@@ -406,6 +434,6 @@
   for(const name of ['pointerdown','pointerup','keydown','click'])doc.addEventListener(name,unlockOnGesture,{capture:true});
   doc.addEventListener('visibilitychange',()=>{if(doc.hidden)stopAnnouncement();reconcile();});
   root.addEventListener('pagehide',()=>{stopMusic();stopResult();stopAnnouncement();});
-  root.addEventListener('pageshow',reconcile);
-  root.KitchenAudio={sync,cue,mount,relay(){embedded=true;}};
+  root.addEventListener('pageshow',unlock);
+  root.KitchenAudio={sync,cue,mount,unlock,relay(){embedded=true;}};
 })(window);
