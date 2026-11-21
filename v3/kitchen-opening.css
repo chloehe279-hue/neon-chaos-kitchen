@@ -575,7 +575,7 @@
 /* Engraved brass cabinet and illuminated card trays. */
 .kitchen-opening[data-page="draw"] {
   background:
-    radial-gradient(ellipse at 24% 37%, #ffe4a2 1%, #f3a65e 49%, #aa432a 100%);
+    radial-gradient(ellipse at 24% 37%, #fff0af 1%, #ffb24a 49%, #ff7d60 100%);
 }
 [data-page="draw"] .opening-shell { position: relative; }
 [data-page="draw"] .opening-shell::before {
@@ -585,12 +585,12 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 18% 44%, #fff0a525 20%, #52232a8a 100%),
+    radial-gradient(ellipse at 18% 44%, #fff5b14d 20%, #ff875040 100%),
     repeating-linear-gradient(135deg, #fff0b12a 0 1px, transparent 1px 9px),
-    repeating-conic-gradient(from 0deg at 22% 44%, #fbbf871a 0deg 9deg, #79333418 9deg 18deg);
+    repeating-conic-gradient(from 0deg at 22% 44%, #fbbf871a 0deg 9deg, #ef682a28 9deg 18deg);
 }
 [data-page="draw"] .opening-top {
-  background: linear-gradient(90deg, transparent, #471f2e95 26%, #471f2eb8 74%, transparent);
+  background: linear-gradient(90deg, transparent, #ffad54b0 26%, #ffc459c9 74%, transparent);
   border-image: linear-gradient(90deg, transparent, #ffc568, transparent) 1;
   box-shadow: none;
 }
@@ -651,13 +651,15 @@
 }
 .opening-steps { gap: 6px; }
 .opening-steps li {
-  border: 1px solid #996354;
+  border: 1px solid #b97249;
   border-bottom-width: 3px;
-  background: #241a2b9c;
+  color: #633826;
+  background: #fff4ca;
 }
 .opening-steps [aria-current="step"] {
-  border-color: #ffd17e;
-  background: linear-gradient(0deg, #982f3b, #6a2f41);
+  border-color: #a44529;
+  color: #572a1d;
+  background: linear-gradient(0deg, #ffc268, #ffe59a);
   box-shadow: 0 2px #d58148, inset 0 0 11px #fa91324d;
 }
 .kitchen-opening .chef-answers button {
@@ -683,9 +685,9 @@
   isolation: isolate;
   gap: clamp(16px, 2.6vw, 34px);
   padding: 15px 13px 19px;
-  border: 2px solid #9d624a;
-  background: #231c2c;
-  box-shadow: inset 0 3px 0 #180f1b;
+  border: 2px solid #bc793b;
+  background: #ffe7a2;
+  box-shadow: inset 0 3px 0 #e9a85b;
 }
 .draw-card-light {
   position: absolute;
@@ -693,17 +695,17 @@
   pointer-events: none;
   z-index: -1;
   background:
-    radial-gradient(ellipse at 26% 53%, #ffc56e4d, transparent 43%),
-    radial-gradient(ellipse at 72% 53%, #ee7e8757, transparent 43%),
-    repeating-linear-gradient(90deg, transparent 0 13px, #ffc48f15 13px 14px);
+    radial-gradient(ellipse at 26% 53%, #fff5c5da, transparent 43%),
+    radial-gradient(ellipse at 72% 53%, #ffc0acb0, transparent 43%),
+    repeating-linear-gradient(90deg, transparent 0 13px, #e279432b 13px 14px);
 }
 .opening-decks[data-reveals="2"] .draw-card-light {
-  background: radial-gradient(ellipse at 50% 54%, #fbc47064, transparent 72%), #4c2e40;
+  background: radial-gradient(ellipse at 50% 54%, #fff1bdc9, transparent 72%), #ffd395;
 }
 .kitchen-opening .opening-card {
-  border: 3px solid #311828;
+  border: 3px solid #72382d;
   background: radial-gradient(circle at 50% 42%, var(--card-bright), var(--card-dark) 68%);
-  box-shadow: inset 0 0 0 2px var(--card-glow), 2px 4px #3c2533, 3px 7px #be7e53, 5px 9px #351c2b;
+  box-shadow: inset 0 0 0 2px var(--card-glow), 2px 4px #3c2533, 3px 7px #f5b65d, 5px 9px #a95731;
 }
 .kitchen-opening .opening-card::before {
   border: 2px solid var(--card-glow);
@@ -745,19 +747,19 @@
   grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr);
   padding-block: clamp(22px, 4vh, 48px) 24px;
 }
-.opening-draw[data-world="fridge"] { --atlas-glow: #9bf4ff; }
-.opening-draw[data-world="toilet"] { --atlas-glow: #abf6d4; }
-.opening-draw[data-world="neon"] { --atlas-glow: #e4a7ff; }
-.opening-draw[data-world="coffee"] { --atlas-glow: #ffb453; }
+.opening-draw[data-world="fridge"] { --atlas-glow: #3ccfe8; }
+.opening-draw[data-world="toilet"] { --atlas-glow: #49cb9f; }
+.opening-draw[data-world="neon"] { --atlas-glow: #bb69e6; }
+.opening-draw[data-world="coffee"] { --atlas-glow: #ff9e36; }
 .opening-draw .draw-picks {
   --cabinet-edge: var(--atlas-glow);
-  background: radial-gradient(ellipse at 50% 0, #763f5a 0, transparent 67%), #291b31;
+  background: radial-gradient(ellipse at 50% 0, #ffcf8c 0, transparent 67%), #fff1c5;
 }
 .chef-chat {
   isolation: isolate;
   background:
     repeating-conic-gradient(at 50% 37%, #ffe29928 0 9deg, transparent 9deg 18deg),
-    linear-gradient(145deg, #883e46, #d16b48 70%, #713141);
+    linear-gradient(145deg, #ffc449, #ff9165 70%, #ff8768);
 }
 .chef-chat::before {
   content: "";
@@ -778,10 +780,10 @@
   margin: 0 0 15px;
   padding: 6px;
   border-block: 2px solid #eb9561;
-  background: repeating-linear-gradient(135deg, #291b31 0 7px, #432743 7px 14px);
+  background: repeating-linear-gradient(135deg, #fff1c5 0 7px, #ffd193 7px 14px);
 }
 .draw-world {
-  --world-tint: #f59a56;
+  --world-tint: #ffb14d;
   --world-x: 0%;
   --world-y: 100%;
   display: grid;
@@ -790,14 +792,14 @@
   min-width: 0;
   padding: 5px 2px 4px;
   border: 1px solid #db986b;
-  color: #fff2d3;
-  background: radial-gradient(ellipse at 50% 36%, var(--world-tint), #40223c 73%);
-  box-shadow: inset 0 0 0 2px #3b253f, 0 2px 0 #180e22;
+  color: #3f2426;
+  background: radial-gradient(ellipse at 50% 36%, var(--world-tint), #fff6d3 73%);
+  box-shadow: inset 0 0 0 2px #fff6d8, 0 2px 0 #e6a663;
   transition: filter 180ms, box-shadow 180ms, border-color 180ms;
 }
-.draw-world[data-world="fridge"] { --world-tint: #4ed1eb; --world-y: 0%; }
-.draw-world[data-world="toilet"] { --world-tint: #67cbad; --world-x: 100%; --world-y: 0%; }
-.draw-world[data-world="neon"] { --world-tint: #cb77e9; --world-x: 100%; }
+.draw-world[data-world="fridge"] { --world-tint: #78edff; --world-y: 0%; }
+.draw-world[data-world="toilet"] { --world-tint: #83efc7; --world-x: 100%; --world-y: 0%; }
+.draw-world[data-world="neon"] { --world-tint: #e0a2ff; --world-x: 100%; }
 .draw-world i {
   width: clamp(34px, 6vw, 74px);
   aspect-ratio: 1;
@@ -812,7 +814,7 @@
   font-weight: 850;
   line-height: 1.25;
 }
-.draw-world[data-state="dimmed"] { filter: saturate(.42) brightness(.73); }
+.draw-world[data-state="dimmed"] { filter: saturate(.64) brightness(.96); }
 .draw-world[data-state="selected"] {
   border-color: var(--atlas-glow);
   box-shadow: inset 0 0 0 2px var(--atlas-glow), 0 0 15px var(--atlas-glow);
@@ -855,19 +857,20 @@
 }
 .draw-readout {
   margin: 13px 0 0;
-  color: #fff3dd;
+  color: #4a2723;
   text-align: center;
   line-height: 1.45;
   font-weight: 800;
   font-size: clamp(12px, 1.45vw, 18px);
-  background: #1f1429;
+  background: #fff5d1;
   padding: 6px 9px;
-  border: 1px solid #b67a63;
+  border: 1px solid #be794a;
 }
 .opening-draw[data-step="2"] .draw-atlas { border-color: var(--atlas-glow); }
 .opening-decks[data-reveals="2"] ~ .draw-readout {
-  color: var(--atlas-glow);
+  color: #4a2723;
   border-color: var(--atlas-glow);
+  box-shadow: inset 0 -3px var(--atlas-glow);
 }
 @media (max-width: 680px) {
   .opening-draw { grid-template-columns: 1fr; padding-block: 17px 24px; }
