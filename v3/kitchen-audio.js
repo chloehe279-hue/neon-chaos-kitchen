@@ -30,7 +30,7 @@
   const doc=root.document;
   const AudioContext=root.AudioContext||root.webkitAudioContext;
   const storeKey='chaos-kitchen-sound-muted-v2';
-  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent-player.wav',doc.currentScript.src);
+  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent-vocoder.wav',doc.currentScript.src);
 
   const soundNames=['start','enter','select','card','pickup','station','chop','flip','miss','surge','warn','good','excellent','fail','win','hazard'];
   let context,master,music,activity,noiseBuffer,timer,track=null,step=0,nextBeat=0;
