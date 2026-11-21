@@ -30,7 +30,7 @@
   const doc=root.document;
   const AudioContext=root.AudioContext||root.webkitAudioContext;
   const storeKey='chaos-kitchen-sound-muted-v2';
-  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent.wav',doc.currentScript.src);
+  const voiceUrl=doc.currentScript?.src && new URL('assets/excellent.wav?v=player-voice',doc.currentScript.src);
 
   const soundNames=['start','enter','select','card','pickup','station','chop','flip','miss','surge','warn','good','excellent','fail','win','hazard'];
   let context,master,music,activity,noiseBuffer,timer,track=null,step=0,nextBeat=0;
@@ -370,8 +370,8 @@
   function shoutExcellent(t){
     stopAnnouncement();
     duck(t,.83);
-    tone(master,t,173,.135,.29,'sine',53);
-    noise(master,t,.165,.27,3400);
+    tone(master,t,173,.12,.18,'sine',53);
+    noise(master,t,.11,.10,3400);
     if(recordedExcellent){
       const voice=context.createBufferSource(),gain=context.createGain();
       voice.buffer=recordedExcellent;
@@ -386,17 +386,14 @@
       voice.start(t+.045);
       return;
     }
-    const speech=root.speechSynthesis;
-    if(!speech||!root.SpeechSynthesisUtterance)return;
-    const call=new root.SpeechSynthesisUtterance('Excellent!');
-    call.lang='en-US';call.pitch=1.36;call.rate=1.12;call.volume=1;
-    const english=speech.getVoices().filter(voice=>/^en[-_]/i.test(voice.lang));
-    call.voice=english.find(voice=>/daniel|alex|david|guy|fred/i.test(voice.name))
-      ??english.find(voice=>voice.localService&&/^en[-_]us$/i.test(voice.lang))??english[0]??null;
-    const stop=()=>speech.cancel();
-    call.onend=call.onerror=()=>{if(announcement===stop)announcement=null;};
+    if(!voiceUrl||!root.Audio)return;
+    const voice=new root.Audio(voiceUrl);
+    voice.volume=.44;
+    const stop=()=>voice.pause();
+    const done=()=>{if(announcement===stop)announcement=null;};
     announcement=stop;
-    speech.speak(call);
+    voice.onended=done;
+    voice.play().catch(done);
   }
   function mount(){
     button=doc.getElementById('audio-toggle');
