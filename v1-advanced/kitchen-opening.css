@@ -619,24 +619,7 @@
   transform: rotate(-9deg);
   z-index: 2;
 }
-.draw-medallion canvas,
-.draw-scene-icons canvas { image-rendering: pixelated; }
-.draw-scene-icons {
-  justify-self: center;
-  display: flex;
-  gap: clamp(4px, .85vw, 12px);
-  padding: 5px 8px;
-  background: #4c2434;
-  border: 2px solid #f3ac5e;
-  box-shadow: 0 0 0 2px #592c35, 4px 4px #9d513d;
-}
-.draw-scene-icons canvas {
-  width: clamp(26px, 3vw, 40px);
-  height: auto;
-  aspect-ratio: 1;
-  border: 1px solid #ffcb85;
-  background: #ffdb96;
-}
+.draw-medallion canvas { image-rendering: pixelated; }
 .draw-picks {
   --cabinet-edge: #f6b35e;
   position: relative;
@@ -753,6 +736,142 @@
 @media (max-width: 680px) {
   .chef-chat { padding: 13px; }
   .draw-medallion { display: none; }
-  .draw-scene-icons { display: none; }
   .opening-decks { padding: 11px 9px 15px; }
+}
+
+/* The kitchen atlas tracks the current shortlist and the revealed destination. */
+.opening-draw {
+  --atlas-glow: #ffcd7a;
+  grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr);
+  padding-block: clamp(22px, 4vh, 48px) 24px;
+}
+.opening-draw[data-world="fridge"] { --atlas-glow: #9bf4ff; }
+.opening-draw[data-world="toilet"] { --atlas-glow: #abf6d4; }
+.opening-draw[data-world="neon"] { --atlas-glow: #e4a7ff; }
+.opening-draw[data-world="coffee"] { --atlas-glow: #ffb453; }
+.opening-draw .draw-picks {
+  --cabinet-edge: var(--atlas-glow);
+  background: radial-gradient(ellipse at 50% 0, #763f5a 0, transparent 67%), #291b31;
+}
+.chef-chat {
+  isolation: isolate;
+  background:
+    repeating-conic-gradient(at 50% 37%, #ffe29928 0 9deg, transparent 9deg 18deg),
+    linear-gradient(145deg, #883e46, #d16b48 70%, #713141);
+}
+.chef-chat::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 7px;
+  border: 2px solid #ffcc88;
+  box-shadow: inset 0 0 0 2px #602b3b;
+  pointer-events: none;
+}
+.chef-portrait {
+  box-shadow: 4px 6px #622c3b, 0 0 0 6px #ec9964, 0 0 0 8px #542736, 0 0 32px #ffb257;
+}
+.draw-atlas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(4px, 1vw, 13px);
+  margin: 0 0 15px;
+  padding: 6px;
+  border-block: 2px solid #eb9561;
+  background: repeating-linear-gradient(135deg, #291b31 0 7px, #432743 7px 14px);
+}
+.draw-world {
+  --world-tint: #f59a56;
+  --world-x: 0%;
+  --world-y: 100%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  min-width: 0;
+  padding: 5px 2px 4px;
+  border: 1px solid #db986b;
+  color: #fff2d3;
+  background: radial-gradient(ellipse at 50% 36%, var(--world-tint), #40223c 73%);
+  box-shadow: inset 0 0 0 2px #3b253f, 0 2px 0 #180e22;
+  transition: filter 180ms, box-shadow 180ms, border-color 180ms;
+}
+.draw-world[data-world="fridge"] { --world-tint: #4ed1eb; --world-y: 0%; }
+.draw-world[data-world="toilet"] { --world-tint: #67cbad; --world-x: 100%; --world-y: 0%; }
+.draw-world[data-world="neon"] { --world-tint: #cb77e9; --world-x: 100%; }
+.draw-world i {
+  width: clamp(34px, 6vw, 74px);
+  aspect-ratio: 1;
+  background: url("assets/cover-worlds.webp") var(--world-x) var(--world-y) / 200% auto no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 3px 0 #2f163abf);
+}
+.draw-world span {
+  max-width: 100%;
+  font-size: clamp(9px, 1.1vw, 14px);
+  text-align: center;
+  font-weight: 850;
+  line-height: 1.25;
+}
+.draw-world[data-state="dimmed"] { filter: saturate(.42) brightness(.73); }
+.draw-world[data-state="selected"] {
+  border-color: var(--atlas-glow);
+  box-shadow: inset 0 0 0 2px var(--atlas-glow), 0 0 15px var(--atlas-glow);
+  filter: saturate(1.18);
+}
+.kitchen-opening .chef-answers button {
+  display: grid;
+  grid-template: auto auto / auto minmax(0, 1fr);
+  gap: 4px 8px;
+  align-content: center;
+  justify-content: stretch;
+  min-height: clamp(66px, 7vw, 100px);
+  padding-right: 11px;
+}
+.draw-option-icons {
+  display: grid;
+  gap: 0;
+  grid-row: 1 / span 2;
+  place-items: center;
+  border: 1px solid #9f6054;
+  background: linear-gradient(#ffe19b, var(--option-accent));
+  box-shadow: 2px 2px #ad644a;
+}
+.draw-option-icons canvas {
+  display: block;
+  width: clamp(17px, 2.55vw, 32px);
+  aspect-ratio: 1;
+  image-rendering: pixelated;
+}
+.chef-answers small { margin-top: 0; }
+.opening-decks { padding: 12px 13px 16px; }
+.kitchen-opening .opening-card { aspect-ratio: 1.38; }
+.kitchen-opening .opening-card[data-revealed] {
+  box-shadow: inset 0 0 0 2px var(--card-glow), 3px 4px #382032, 4px 6px #b37960, 0 0 21px var(--card-glow);
+}
+.opening-card-art { width: clamp(44px, 6.2vw, 86px); }
+#opening-scene[data-revealed] .opening-card-art {
+  background:
+    radial-gradient(circle, var(--revealed), #fff5d7 77%);
+}
+.draw-readout {
+  margin: 13px 0 0;
+  color: #fff3dd;
+  text-align: center;
+  line-height: 1.45;
+  font-weight: 800;
+  font-size: clamp(12px, 1.45vw, 18px);
+  background: #1f1429;
+  padding: 6px 9px;
+  border: 1px solid #b67a63;
+}
+.opening-draw[data-step="2"] .draw-atlas { border-color: var(--atlas-glow); }
+.opening-decks[data-reveals="2"] ~ .draw-readout {
+  color: var(--atlas-glow);
+  border-color: var(--atlas-glow);
+}
+@media (max-width: 680px) {
+  .opening-draw { grid-template-columns: 1fr; padding-block: 17px 24px; }
+  .draw-atlas { margin-bottom: 10px; padding: 4px; }
+  .kitchen-opening .chef-answers button { padding-left: 10px; }
+  .kitchen-opening .opening-card { aspect-ratio: 1.12; min-height: 125px; }
 }
